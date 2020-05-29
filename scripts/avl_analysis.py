@@ -1,6 +1,6 @@
 from kbeutils import avl
 from parapy.gui import display
-from full_aircraft import Aircraft
+#from full_aircraft import Aircraft
 from parapy.core import *
 from parapy.core.validate import *
 from parapy.core.decorators import action
@@ -9,7 +9,7 @@ import numpy as np
 import warnings
 
 
-class Avl_analysis(avl.Interface):
+class AvlAnalysis(avl.Interface):
 
     aircraft = Input(in_tree=True)
     case_settings = Input()
@@ -49,7 +49,7 @@ class Avl_analysis(avl.Interface):
 
         right_wing = self.aircraft.right_wing
 
-        with open("output.txt", "a") as file:
+        with open("../output.txt", "a") as file:
             file.write('Airfoil type\tWinglet type\tMach\tAltitude\tSweep 0.25c\t\tq\t'
                        'M_root(fix AoA)\t\tM_root(fix Cl)\n\t\t')
             file.write(str(self.TYPE_wing_airfoil))
@@ -140,7 +140,7 @@ class Avl_analysis(avl.Interface):
 
         M_root = M_root_wing + M_root_winglet
 
-        file = open("output.txt", "a")
+        file = open("../output.txt", "a")
         for m in list(M_root):
             file.write(str(int(m)))
             file.write("\t\t\t")
@@ -151,7 +151,7 @@ class Avl_analysis(avl.Interface):
 
     @Attribute
     def plot_M_root_bending(self):
-        with open("output.txt", 'r+') as f:
+        with open("../output.txt", 'r+') as f:
             data = []
             count = 0
             for line in f:
@@ -173,7 +173,7 @@ class Avl_analysis(avl.Interface):
             plt.show()
         return 'Plot done'
 
-
+'''
 if __name__ == '__main__':
     obj = Aircraft(label="A320")
     # display(obj)
@@ -181,6 +181,7 @@ if __name__ == '__main__':
     cases = [('fixed_aoa', {'alpha': 3}),
              ('fixed_cl', {'alpha': avl.Parameter(name='alpha', value=0.5, setting='CL')})]
 
-    analysis = Avl_analysis(aircraft=obj,
+    analysis = AvlAnalysis(aircraft=obj,
                             case_settings=cases)
     display(analysis)
+'''
