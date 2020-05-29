@@ -7,9 +7,10 @@ from scripts.VT import VerticalTail
 from scripts.readGeometry import ReadGeometry
 from scripts.winglet import *
 from parapy.exchange.step import STEPWriter
-from AVL_analysis import Avl_analysis
+from scripts.avl_analysis import AvlAnalysis
 
 DIR = os.path.dirname(__file__)
+
 
 class Aircraft(GeomBase):
     input = ReadGeometry("A320")
@@ -282,7 +283,13 @@ class Aircraft(GeomBase):
 
     @Part
     def avl_analysis(self):
-        return Avl_analysis()
+        return AvlAnalysis(aircraft=[self.right_wing,
+                                     self.right_winglet,
+                                     self.left_wing,
+                                     self.left_winglet],
+                           case_settings=[('fixed_aoa', {'alpha': 3}),
+                                           ('fixed_cl', {'alpha': avl.Parameter(name='alpha', value=0.5, setting='CL')})],
+                            )
 
 
 if __name__ == '__main__':
