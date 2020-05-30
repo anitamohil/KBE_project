@@ -20,11 +20,11 @@ class Aircraft(GeomBase):
     TYPE_winglet = Input(0)
     M_cruise = Input(input.M_cruise)  # cruise mach number
 
-    ##### FUSELAGE #####
+    # -------- FUSELAGE -----------#
     ln_d = Input(1.22)  # nose slenderness ratio
     lt_d = Input(2.724)  # tail slenderness ratio
 
-    ###### WING ######
+    # --------- WING --------------#
     name = Input("wing")
     airfoil_root = Input(input.w_af_root)
     airfoil_kink = Input(input.w_af_kink)
@@ -35,21 +35,21 @@ class Aircraft(GeomBase):
     wing_c_root = Input(input.wing_c_root)
     wing_taper_ratio_inboard = Input(input.wing_taper_ratio_inboard)
 
-    ####### Horizontal Tail ############
+    # ---------- Horizontal Tail -------------#
     htp_root_airfoil = Input("Boeing29root")
     htp_tip_airfoil = Input("lockheedtip")
     htp_area = Input(31)
     htp_taper = Input(0.3)
     htp_dihedral = Input(5)
 
-    ######### VERTICAL TAIL ###############
+    # ----------- VERTICAL TAIL ---------------#
     vtp_root_airfoil = Input("NACA0012")
     vtp_tip_airfoil = Input("NACA0012")
     vtp_aspect_ratio = Input(1.82)
     vtp_sweep = Input(35)
     vtp_area = Input(21.5)
 
-    ########### Winglet ####################
+    # -------------- Winglet -------------------#
     # --------TYPE 0 Canted Winglet-------------
     ct_name = "Canted Winglet"
     ct_airfoil_root = Input(input.ct_airfoil_root)
@@ -67,11 +67,11 @@ class Aircraft(GeomBase):
     wtf_airfoil_up = Input(input.wtf_airfoil_up)
     wtf_airfoil_root = Input(input.wtf_airfoil_root)
     wtf_airfoil_down = Input(input.wtf_airfoil_down)
-    wtf_chord_up = Input(input.wtf_chord_up)
-    wtf_chord_root = Input(input.wtf_chord_root)
-    wtf_chord_down = Input(input.wtf_chord_down)
-    wtf_height_up = Input(input.wtf_height_up)
-    wtf_height_down = Input(input.wtf_height_down)
+    wtf_chord_root_ratio = Input(input.wtf_chord_root_ratio)
+    wtf_taper_ratio_up = Input(input.wtf_taper_ratio_up)
+    wtf_taper_ratio_down = Input(input.wtf_taper_ratio_down)
+    wtf_height_up_ratio = Input(input.wtf_height_up_ratio)
+    wtf_height_down_ratio = Input(input.wtf_height_down_ratio)
     wtf_sweep_up = Input(input.wtf_sweep_up)
     wtf_sweep_down = Input(input.wtf_sweep_down)
     wtf_twist_up = Input(input.wtf_twist_up)
@@ -171,17 +171,20 @@ class Aircraft(GeomBase):
                                 airfoil_up=self.wtf_airfoil_up,
                                 airfoil_root=self.wtf_airfoil_root,
                                 airfoil_down=self.wtf_airfoil_down,
-                                chord_up=self.wtf_chord_up,
-                                chord_root=self.wtf_chord_root,
-                                chord_down=self.wtf_chord_down,
-                                height_up=self.wtf_height_up,
-                                height_down=self.wtf_height_down,
+                                chord_wingtip=self.right_wing.chords[2],
+                                wing_span=self.right_wing.wing_span/2,
+                                chord_root_ratio=self.wtf_chord_root_ratio,
+                                taper_ratio_up=self.wtf_taper_ratio_up,
+                                taper_ratio_down=self.wtf_taper_ratio_down,
+                                height_up_ratio=self.wtf_height_up_ratio,
+                                height_down_ratio=self.wtf_height_down_ratio,
                                 sweep_up=self.wtf_sweep_up,
                                 sweep_down=self.wtf_sweep_down,
                                 twist_up=self.wtf_twist_up,
                                 twist_down=self.wtf_twist_down,
                                 position=rotate(translate(self.right_wing.section_positions[2],
-                                                          'x', self.right_wing.chords[2] - self.wtf_chord_root),
+                                                          'x', self.right_wing.chords[2] -
+                                                          self.right_wing.chords[2] * self.wtf_chord_root_ratio),
                                                 'x', np.deg2rad(-90)),
                                 avl_duplicate_pos=self.position,
                                 suppress=not self.winglet_ON)
