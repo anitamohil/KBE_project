@@ -3,6 +3,7 @@ from parapy.core import *
 from parapy.geom import *
 from math import radians
 from math import tan
+from scripts.help_fucntions import *
 import warnings
 
 
@@ -81,7 +82,7 @@ class Fuselage(GeomBase):
         return local_nose_r
 
     @Part
-    def Nose_Crv(self):
+    def nose_drv(self):
         """generate circular curves for the nose"""
         return Circle(quantify=len(self.fu_sections),
                       radius=self.local_nose_radius[child.index],
@@ -89,12 +90,12 @@ class Fuselage(GeomBase):
                                         Vector(0, 1, 0)))
 
     @Part
-    def Nose(self):
+    def nose(self):
         """ generate the nose profile """
         return LoftedSolid(profiles=self.Nose_Crv,
                            color='white')
 
-    ##########---------TAIL SECTION---------------########
+    # ----------------TAIL SECTION---------------########
 
     """ calculate length of the fuselage tail"""
     @Attribute
@@ -124,7 +125,7 @@ class Fuselage(GeomBase):
                                                               Vector(0, 1, 0)))],
                            color='white')
 
-########  GENERATE WARNINGS ##################
+    # --------------- GENERATE WARNINGS ----------------------#
     popup_gui = Input(True)
 
     @Attribute
@@ -148,22 +149,6 @@ class Fuselage(GeomBase):
             return 2.724
         else:
             return self.lt_d
-
-
-def generate_warning(warning_header, msg):
-    from tkinter import Tk, messagebox
-
-    # initialization
-    window = Tk()
-    window.withdraw()
-
-    # Generates message box
-    messagebox.showwarning(warning_header, msg)
-
-    # Kills the GUI
-    window.deiconify()
-    window.destroy()
-    window.quit()
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 import numpy as np
 import pathlib
 
+
 class ReadGeometry:
     def __init__(self, name):
         self.name = name
@@ -50,11 +51,11 @@ class ReadGeometry:
                     self.wtf_airfoil_root = self.wlt_airfoils[1]
                     self.wtf_airfoil_down = self.wlt_airfoils[2]
 
-                    self.wtf_chord_up = self.dat_wlt[0]
-                    self.wtf_chord_root = self.dat_wlt[1]
-                    self.wtf_chord_down = self.dat_wlt[2]
-                    self.wtf_height_up = self.dat_wlt[3]
-                    self.wtf_height_down = self.dat_wlt[4]
+                    self.wtf_chord_root_ratio = self.dat_wlt[0]
+                    self.wtf_taper_ratio_up = self.dat_wlt[1]
+                    self.wtf_taper_ratio_down = self.dat_wlt[2]
+                    self.wtf_height_up_ratio = self.dat_wlt[3]
+                    self.wtf_height_down_ratio = self.dat_wlt[4]
                     self.wtf_sweep_up = self.dat_wlt[5]
                     self.wtf_sweep_down = self.dat_wlt[6]
                     self.wtf_twist_up = self.dat_wlt[7]

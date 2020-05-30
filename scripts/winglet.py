@@ -102,11 +102,14 @@ class WingtipFence(GeomBase):
     airfoil_up = Input()
     airfoil_root = Input()
     airfoil_down = Input()
-    chord_up = Input(validator=Range(0.1, 0.4))
-    chord_root = Input(validator=Range(0.4, 0.9))
-    chord_down = Input(validator=Range(0.1, 0.4))
-    height_up = Input(validator=Range(0.4, 0.6))
-    height_down = Input(validator=Range(0.4, 0.6))
+    wing_span = Input()
+    chord_wingtip = Input()
+
+    chord_root_ratio = Input(validator=Range(0.3, 0.6))
+    taper_ratio_up = Input(validator=Range(0.2, 0.5))
+    taper_ratio_down = Input(validator=Range(0.2, 0.5))
+    height_up_ratio = Input(validator=Range(0.02, 0.6))
+    height_down_ratio = Input(validator=Range(0.02, 0.6))
     sweep_up = Input(validator=Range(50, 70))
     sweep_down = Input(validator=Range(50, 70))
     twist_up = Input(validator=Range(0, 5))
@@ -116,7 +119,18 @@ class WingtipFence(GeomBase):
 
     @Attribute
     def chords(self):
-        return self.chord_up, self.chord_root, self.chord_down
+        chord_root = self.chord_wingtip * self.chord_root_ratio
+        chord_up = chord_root * self.taper_ratio_up
+        chord_down = chord_root * self.taper_ratio_down
+        return chord_up, chord_root, chord_down
+
+    @Attribute
+    def height_up(self):
+        return self.wing_span * self.height_up_ratio
+
+    @Attribute
+    def height_down(self):
+        return self.wing_span * self.height_down_ratio
 
     @Attribute
     def airfoils(self):
@@ -185,7 +199,7 @@ class RakedWingtip(GeomBase):
     @Attribute
     def section_positions(self):
         start_pos = self.position
-        tip_pos = self.position.translate('x', self.span*np.tan(np.deg2rad(self.sweep_le)),
+        tip_pos = self.position.translate('x', self.span * np.tan(np.deg2rad(self.sweep_le)),
                                           'y', self.span)
         return start_pos, tip_pos
 
@@ -392,29 +406,5 @@ class Sharklet(GeomBase):
     @nu_blended_sections.on_slot_change
     def nu_blended_sections_listener(self, slot, new, old):
         self.nu_blended_sections = check_slot_change('nu_blended sections', new, old, [5, 10])
-
-
-'''
-if __name__ == '__main__':
-    from parapy.gui import display
-    obj = CantedWinglet(name="winglet",
-                        airfoil_up="NACA2410",
-                        airfoil_root="NACA2410",
-                        airfoil_down="NACA0006",
-                        chord_up=0.1645,
-                        chord_root=0.7862,
-                       chord_down=0.1722,
-                       height_up=0.4778,
-                       height_down=0.5063,
-                       sweep_up=53,
-                       sweep_down=66,
-                       twist_up=0,
-                       twist_down=0)
-    display(obj)
-'''
-
-
-
-
 
 
