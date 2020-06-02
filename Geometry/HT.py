@@ -2,7 +2,7 @@ from math import radians, tan
 from parapy.core import *
 from parapy.geom import *
 
-from scripts.section import Section
+from Geometry.section import Section
 import warnings
 
 

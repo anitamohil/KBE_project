@@ -1,9 +1,9 @@
 from parapy.geom import *
 from parapy.core import *
-from scripts.section import Section
+from Geometry.section import Section
 import kbeutils.avl as avl
 import numpy as np
-from scripts.help_fucntions import *
+from HelperFunction.help_fucntions import *
 from parapy.core.validate import *
 
 
@@ -18,7 +18,6 @@ class CantedWinglet(GeomBase):
     height_ratio = Input()
     sweep = Input()
     cant = Input()
-    #twist_root = Input()
     twist_tip = Input()
 
     avl_duplicate_pos = Input()

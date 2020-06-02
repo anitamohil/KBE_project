@@ -14,7 +14,7 @@
 
 from parapy.geom import *
 from parapy.core import *
-from scripts.ref_frame import Frame
+from Geometry.ref_frame import Frame
 import os
 import pathlib
 

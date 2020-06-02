@@ -2,7 +2,7 @@ from kbeutils.geom import Naca4AirfoilCurve
 from kbeutils.geom.curve import Naca5AirfoilCurve
 from parapy.geom import *
 from parapy.core import *
-from scripts import Airfoil
+from Geometry import Airfoil
 import kbeutils.avl as avl
 
 

@@ -1,13 +1,13 @@
 import os
-from scripts.ref_frame import Frame
-from scripts.fuselage import Fuselage
-from scripts.wing import Wing
-from scripts.HT import HorizontalTail
-from scripts.VT import VerticalTail
-from scripts.readGeometry import ReadGeometry
-from scripts.winglet import *
+from Geometry.ref_frame import Frame
+from Geometry.fuselage import Fuselage
+from Geometry.wing import Wing
+from Geometry.HT import HorizontalTail
+from Geometry.VT import VerticalTail
+from HelperFunction.readGeometry import ReadGeometry
+from Geometry.winglet import *
 from parapy.exchange.step import STEPWriter
-from scripts.avl_analysis import AvlAnalysis
+from HelperFunction.analysis import Analysis
 
 DIR = os.path.dirname(__file__)
 
@@ -286,13 +286,17 @@ class Aircraft(GeomBase):
 
     @Part
     def avl_analysis(self):
-        return AvlAnalysis(aircraft=[self.right_wing,
-                                     self.right_winglet,
-                                     self.left_wing,
-                                     self.left_winglet],
-                           case_settings=[('fixed_aoa', {'alpha': 3}),
-                                           ('fixed_cl', {'alpha': avl.Parameter(name='alpha', value=0.5, setting='CL')})],
-                            )
+        return Analysis(aircraft=[self.right_wing,
+                                  self.right_winglet,
+                                  self.left_wing,
+                                  self.left_winglet],
+                        altitude=9000,
+                        TYPE_winglet=self.TYPE_winglet,
+                        TYPE_wing_airfoil=self.TYPE_wing_airfoil,
+                        configuration=self.avl_configuration,
+                        case_settings=[('fixed_aoa', {'alpha': 3}),
+                                       ('fixed_cl', {'alpha': avl.Parameter(name='alpha', value=0.5, setting='CL')})]
+                        )
 
 
 if __name__ == '__main__':

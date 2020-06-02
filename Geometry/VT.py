@@ -1,8 +1,8 @@
 from __future__ import division
 from math import sqrt
-from scripts.wing import *
-from scripts.fuselage import *
-from scripts.help_fucntions import *
+from Geometry.wing import *
+from Geometry.fuselage import *
+from HelperFunction.help_fucntions import *
 
 
 class VerticalTail(GeomBase):
