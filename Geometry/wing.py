@@ -1,9 +1,9 @@
 import kbeutils.avl as avl
-
 from math import *
 from parapy.geom import *
 from parapy.core import *
-from scripts.section import Section
+from HelperFunction.help_fucntions import *
+from Geometry.section import Section
 import warnings
 
 
@@ -309,22 +309,6 @@ class Wing(GeomBase):
             return 7
         else:
             return self.wing_c_root
-
-
-def generate_warning(warning_header, msg):
-    from tkinter import Tk, messagebox
-
-    # initialization
-    window = Tk()
-    window.withdraw()
-
-    # generates the message box
-    messagebox.showwarning(warning_header, msg)
-
-    # Kills the GUI
-    window.deiconify()
-    window.destroy()
-    window.quit()
 
 
 '''if __name__ == '__main__':

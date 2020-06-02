@@ -3,7 +3,7 @@ from parapy.core import *
 from parapy.geom import *
 from math import radians
 from math import tan
-from scripts.help_fucntions import *
+from HelperFunction.help_fucntions import *
 import warnings
 
 
@@ -57,7 +57,7 @@ class Fuselage(GeomBase):
         return self.fuselage_length - (self.nose_length + self.tail_length)
 
     @Part
-    def Cabin(self):
+    def cabin(self):
         """ create cabin part of the fuselage, modeled as a cylinder, rotate to align with x axis and translate
         such that the nose starts at Point(0,0,0) """
         return TransformedShape(shape_in=RotatedShape(Cylinder(radius=self.cabin_d / 2.,
@@ -68,7 +68,7 @@ class Fuselage(GeomBase):
                                 color='white')
 
     @Attribute
-    def nosesteplength(self):
+    def nose_step_length(self):
         """ step size in between the generated curves"""
         steplength = self.nose_length / (len(self.fu_sections) - 1)
         return steplength
@@ -82,17 +82,17 @@ class Fuselage(GeomBase):
         return local_nose_r
 
     @Part
-    def nose_drv(self):
+    def nose_crv(self):
         """generate circular curves for the nose"""
         return Circle(quantify=len(self.fu_sections),
                       radius=self.local_nose_radius[child.index],
-                      position=rotate90(translate(self.position, x=child.index * self.nosesteplength),
+                      position=rotate90(translate(self.position, x=child.index * self.nose_step_length),
                                         Vector(0, 1, 0)))
 
     @Part
     def nose(self):
         """ generate the nose profile """
-        return LoftedSolid(profiles=self.Nose_Crv,
+        return LoftedSolid(profiles=self.nose_crv,
                            color='white')
 
     # ----------------TAIL SECTION---------------########
@@ -109,16 +109,16 @@ class Fuselage(GeomBase):
         create truncated cone with the end radius tail_r
         """
         return LoftedSolid(profiles=[Circle(radius=self.cabin_d / 2.,
-                                            position=rotate90(translate(self.Cabin.position,
+                                            position=rotate90(translate(self.cabin.position,
                                                                         x=self.cabin_l), Vector(0, 1, 0))),
                                      Circle(radius=(self.cabin_d / 2) * 0.99,
-                                            position=rotate90(translate(self.Cabin.position,
+                                            position=rotate90(translate(self.cabin.position,
                                                                         x=self.cabin_l + 0.25,
                                                                         z=((self.cabin_d / 2) - (
                                                                                 self.cabin_d / 2) * 0.99)),
                                                               Vector(0, 1, 0))),
                                      Circle(radius=self.tail_radius,
-                                            position=rotate90(translate(self.Cabin.position,
+                                            position=rotate90(translate(self.cabin.position,
                                                                         x=self.cabin_l + self.tail_length,
                                                                         z=self.tail_length * tan(
                                                                             radians(self.upsweep_angle))),

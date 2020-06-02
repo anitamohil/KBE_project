@@ -1,51 +1,48 @@
 from kbeutils import avl
-from parapy.gui import display
-#from full_aircraft import Aircraft
 from parapy.core import *
-from parapy.core.validate import *
-from parapy.core.decorators import action
 import matplotlib.pyplot as plt
 import numpy as np
-import warnings
+from parapy.core.validate import *
+from parapy.core.decorators import action
+from parapy.gui.image import Image
+from HelperFunction.help_fucntions import *
+from fpdf import FPDF
 
 
-class AvlAnalysis(avl.Interface):
-
-    aircraft = Input(in_tree=True)
-    case_settings = Input()
-    plot_which = Input('altitude')
-
+class Analysis(avl.Interface):
     # TYPE_winglet and altitude will be passed to interface for warning evaluation
-    @Input
-    def TYPE_winglet(self):
-        return self.aircraft.TYPE_winglet
-
-    @Input
-    # 1: 1000m,  2: 5000m, 3:9000m
-    def altitude(self):
-        return 3
-
     # TYPE_wing_airfoil will be passed to interface for plotting purposes
     # supercritical: 1, NACA-6: 2, Conventional: 3.
-    @Input
-    def TYPE_wing_airfoil(self):
-        return self.aircraft.TYPE_wing_airfoil
+    # TYPE_wing_airfoil will be passed to interface for plotting purposes
+    # supercritical: 1, NACA-6: 2, Conventional: 3.
+    aircraft = Input(in_tree=True)
+    case_settings = Input()
+    altitude = Input(validator=Range(0, 11000))
+    plot_which = Input('altitude')
+    TYPE_winglet = Input()
+    TYPE_wing_airfoil = Input()
+    configuration = Input()
 
     @Attribute
-    def configuration(self):
-        return self.aircraft.avl_configuration
+    def air_property(self):
+        # barometric formula for air density (0-11000m)
+        g = 9.80665         # gravitational accel       [m/s2]
+        R = 8.3144598       # universal gas constant    [Nm]
+        M = 0.0289644       # molar mass of Earth's air [kg/mol]
+        T = 288.15          # standard temperature      [K]
+        L = -0.0065         # temperature lapse rate    [K/m]
+        rho_b = 1.225       # air density at sea level  [kg/m3]
+        gamma = 1.4
+        air_density = rho_b * (T / (T+L*int(self.altitude))) ** (1+(g*M) / (R*L))
+        speed_of_sound = np.sqrt(gamma * R * (T+L*int(self.altitude)) / M)
+        return air_density, speed_of_sound
 
     @Attribute
     # dynamic pressure
     def q(self):
-        rho = [1.112, 0.736, 0.467]
-        a = [336.4, 320.5, 303.8]
-        if self.altitude == 1:
-            q = 0.5 * rho[0] * (a[0] * float(self.configuration.mach))**2
-        elif self.altitude == 2:
-            q = 0.5 * rho[1] * (a[1] * float(self.configuration.mach))**2
-        else:
-            q = 0.5 * rho[2] * (a[2] * float(self.configuration.mach))**2
+        rho = self.air_property[0]
+        a = self.air_property[1]
+        q = 0.5 * rho * (a * float(self.configuration.mach))**2
 
         right_wing = self.aircraft.right_wing
 
@@ -64,7 +61,6 @@ class AvlAnalysis(avl.Interface):
             file.write("\t")
             file.write(str(round(q, 2)))
             file.write("\t")
-
         return q
 
     @Part
@@ -173,15 +169,34 @@ class AvlAnalysis(avl.Interface):
             plt.show()
         return 'Plot done'
 
-'''
-if __name__ == '__main__':
-    obj = Aircraft(label="A320")
-    # display(obj)
+    @Attribute
+    def output_images(self):
+        image_1 = Image(shapes=self.aircraft[0].solid, view='top', width=400, height=400)
+        image_2 = Image(shapes=self.aircraft[1].surface, view='top', width=400, height=400)
+        return image_1, image_2
 
-    cases = [('fixed_aoa', {'alpha': 3}),
-             ('fixed_cl', {'alpha': avl.Parameter(name='alpha', value=0.5, setting='CL')})]
+    @action(label='Check Inputs')
+    def check(self):
+        if self.TYPE_winglet == 3:
+            msg1 = "Sharklet is not supported for AVL analysis"
+            warnings.warn(msg1)
+            generate_warning("Warning: ", msg1)
+        elif not 0 < self.altitude < 11000:
+            msg2 = "Altitude should not exceed 11000m"
+            warnings.warn(msg2)
+            generate_warning("Warning: ", msg2)
+        else:
+            msg = "You are flying at " + str(self.altitude) + "m. All good! Launch it!"
+            generate_warning(" ", msg)
 
-    analysis = AvlAnalysis(aircraft=obj,
-                            case_settings=cases)
-    display(analysis)
-'''
+    @action(label='Print PDF')
+    def printPDF(self):
+        self.output_images[0].write('Output/test1.png')
+        self.output_images[1].write('Output/test2.png')
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font('Arial', 'B', 16)
+        pdf.image('Output/test1.png', 10, 10)
+        pdf.output('Output/testpdf.pdf', 'F')
+
+

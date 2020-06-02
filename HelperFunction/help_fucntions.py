@@ -10,7 +10,6 @@ def generate_warning(warning_header, msg):
     :return: None as it is GUI operation
     """
 
-
     # initialization
     window = Tk()
     window.withdraw()
