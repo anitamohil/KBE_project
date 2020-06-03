@@ -1,3 +1,11 @@
+# To Do List (Delete one after finishing it)
+# TODO: Make the HT and VT more object-oriented
+# TODO: Evaluate the effect of the winglet in terms of fuel required for a certain mission
+# TODO: Fix the output 3D model
+# TODO: Output pdf
+# TODO: EMWET
+
+
 import os
 from Geometry.ref_frame import Frame
 from Geometry.fuselage import Fuselage
